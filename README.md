@@ -12,5 +12,5 @@
 
 ## py-client-gui
 
-客户端的gui版本
+客户端的gui版本。
 
