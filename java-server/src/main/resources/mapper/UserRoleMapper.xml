@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group4.javaserver.dao.UserRoleMapper">
+
+    <resultMap type="com.group4.javaserver.pojo.UserRole" id="UserRoleMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="adminId" column="admin_id" jdbcType="INTEGER"/>
+        <result property="adminName" column="admin_name" jdbcType="VARCHAR"/>
+        <result property="roleCode" column="role_code" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserRoleMap">
+        select
+          id, admin_id, admin_name, role_code
+        from scdx.user_role
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserRoleMap">
+        select
+          id, admin_id, admin_name, role_code
+        from scdx.user_role
+        limit #{offset}, #{limit}
+    </select>
+
+
+    <!--查询指定行数据-->
+    <select id="getItemsByName" resultMap="UserRoleMap">
+        select
+          id, admin_id, admin_name, role_code
+        from scdx.user_role
+        where admin_name = #{adminName}
+    </select>
+
+    <select id="queryRoleCodeByName" resultMap="UserRoleMap">
+        select
+          role_code
+        from scdx.user_role
+        where admin_name = #{adminName}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserRoleMap">
+        select
+          id, admin_id, admin_name, role_code
+        from scdx.user_role
+    </select>
+
+    <insert id="save">
+        insert into user_role ( admin_id,admin_name)
+        values (#{adminId},#{adminName});
+    </insert>
+
+    <delete  id="deleteRoleByName">
+        delete from user_role
+        where (role_code=#{roleCode} and admin_name=#{adminName})
+    </delete>
+
+    <delete  id="deleteAllRoleById">
+        delete from user_role
+        where admin_id=#{adminId}
+    </delete>
+
+    <insert id="addRoleByName">
+        insert into user_role ( admin_id,admin_name,role_code)
+        values (#{adminId},#{adminName},#{roleCode});
+    </insert>
+
+</mapper>

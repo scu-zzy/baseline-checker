@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group4.javaserver.dao.DeviceMapper">
+
+    <resultMap type="com.group4.javaserver.pojo.Device" id="DeviceMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boardId" column="board_id" jdbcType="VARCHAR"/>
+        <result property="computerName" column="computer_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DeviceMap">
+        select
+          id, board_id, computer_name, create_time, update_time, is_deleted
+        from device
+        where id = #{id}
+    </select>
+
+    <!--批量删除-->
+    <update id="deleteAllByPk">
+        update device set is_deleted = 1
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DeviceMap">
+        select
+          id, board_id, computer_name, create_time, update_time, is_deleted
+        from device
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="DeviceMap">
+        select
+          id, board_id, computer_name, create_time, update_time
+        from device
+        <where>
+            is_deleted = 0
+            <if test="conditionVo.keywords != null and conditionVo.keywords != ''">
+                and (board_id like #{conditionVo.keywords} or computer_name like #{conditionVo.keywords})
+            </if>
+            <if test="conditionVo.startTime != null">
+                and create_time &gt;= #{conditionVo.startTime}
+            </if>
+            <if test="conditionVo.endTime != null">
+                and create_time &lt;= #{conditionVo.endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--通过主板ID查询-->
+    <select id="queryByBoardId" resultType="com.group4.javaserver.pojo.Device">
+        select * from device where board_id = #{boardId}
+    </select>
+    <!--统计数量-->
+    <select id="count" resultType="java.lang.Integer">
+        select count(*) from device
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into device(board_id, computer_name, create_time)
+        values (#{boardId}, #{computerName}, #{createTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update device
+        <set>
+            <if test="computerName != null and computerName != ''">
+                computer_name = #{computerName},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from device where id = #{id}
+    </delete>
+
+</mapper>

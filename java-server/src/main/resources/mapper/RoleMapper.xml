@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group4.javaserver.dao.RoleMapper">
+
+    <resultMap type="com.group4.javaserver.pojo.Role" id="RoleMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="roleDisplay" column="role_display" jdbcType="VARCHAR"/>
+        <result property="roleState" column="role_state" jdbcType="INTEGER"/>
+        <result property="roleCode" column="role_code" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryByCode" resultMap="RoleMap">
+        select
+          id, role_name, role_display, role_state, role_code
+        from scdx.role
+        where role_code = #{roleCode}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RoleMap">
+        select
+          id, role_name, role_display, role_state, role_code
+        from scdx.role
+        where id = #{id}
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RoleMap">
+        select
+          id, role_name, role_display, role_state, role_code
+        from scdx.role
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="RoleMap">
+        select
+          id, role_name, role_display, role_state, role_code
+        from scdx.role
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="roleName != null and roleName != ''">
+                and role_name = #{roleName}
+            </if>
+            <if test="roleDisplay != null and roleDisplay != ''">
+                and role_display = #{roleDisplay}
+            </if>
+            <if test="roleState != null">
+                and role_state = #{roleState}
+            </if>
+            <if test="roleCode != null">
+                and role_code = #{roleCode}
+            </if>
+        </where>
+    </select>
+    <select id="getRoleList" resultMap="RoleMap">
+        select
+            role_code
+        from scdx.role
+            <if test="roleCode != null">
+                and role_code = #{roleCode}
+            </if>
+    </select>
+
+
+</mapper>

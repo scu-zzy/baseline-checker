@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>服务详情</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="/css/font.css">
+        <link rel="stylesheet" href="/css/xadmin.css">
+        <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+        <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+        <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <body>
+    <div class="x-body layui-anim layui-anim-up">
+
+        <fieldset class="layui-elem-field">
+            <legend>服务详情</legend>
+            <div class="layui-field-box">
+                <table class="layui-table">
+                    <tbody>
+                        <tr>
+                            <th>服务编号</th>
+                            <td id="service0">1.0.180420</td></tr>
+                        <tr>
+                            <th>服务展示名称</th>
+                            <td id="service1">x.xuebingsi.com</td></tr>
+                        <tr>
+                            <th>服务名称</th>
+                            <td id="service2">WINNT</td></tr>
+                        <tr>
+                            <th>检测值</th>
+                            <td id="service3">Apache/2.4.23 (Win32) OpenSSL/1.0.2j mod_fcgid/2.3.9</td></tr>
+                        <tr>
+                            <th>建议值</th>
+                            <td id="service4">5.6.27</td></tr>
+                        <tr>
+                            <th>核查结果</th>
+                            <td id="service5">cgi-fcgi</td></tr>
+                        <tr>
+                            <th>加固提示</th>
+                            <td id="service6">cgi-fcgi</td></tr>
+                        <tr>
+                            <th>服务说明</th>
+                            <td id="service7">cgi-fcgi</td></tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
+    </body>
+    <script>
+        // 获取传递的数据
+        let data = "[[${#request.getParameter('data')}]]";
+
+        data = data.split(",")
+        $(function () {
+            $(data).each(function () {
+                $("#service0").text(data[0]);
+                $("#service1").text(data[1]);
+                $("#service2").text(data[2]);
+                $("#service3").text(data[3]);
+                $("#service4").text(data[4]);
+                $("#service5").text(data[5]);
+                $("#service6").text(data[6]);
+                $("#service7").text(data[7]);
+            })
+        })
+
+
+    </script>
+</html>

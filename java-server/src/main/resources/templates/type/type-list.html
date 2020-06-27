@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>扫描类型列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">扫描类型管理</a>
+        <a>
+          <cite>扫描类型列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input type="text" name="keywords"  placeholder="请输入关键字" autocomplete="off" class="layui-input">
+          <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <span class="x-right" style="line-height:40px" id="admin-num" >共有数据：<span id="total"></span>条</span>
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>扫描类型码</th>
+            <th>扫描类型名</th>
+
+        </thead>
+        <tbody id="data-body">
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+      <div class="page" id = "fenye">
+        <div>
+          <a class="prev" href="">&lt;&lt;</a>
+          <a class="num" href="">1</a>
+          <span class="current">2</span>
+          <a class="num" href="">3</a>
+          <a class="num" href="">489</a>
+          <a class="next" href="">&gt;&gt;</a>
+        </div>
+      </div>
+
+    </div>
+    <script>
+
+
+
+      /*搜索*/
+      layui.use('form', function(){
+        let form = layui.form;
+
+        form.on('submit(search)', function(data){
+          getPageData(1,pageSize);
+
+          return false;
+        })
+      });
+
+
+      /*设备-删除*/
+      function device_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+            $.ajax({
+              type:"post",
+              url:"",
+              data: {ids:[id]},
+              dataType:"json",
+              success : function (data) {
+                  if(data.code === 200){
+                    layer.msg('已删除!',{icon:1,time:1000});
+                    getPageData(nowPage,pageSize);
+                  }
+              }
+            })
+
+          });
+      }
+
+
+      /*批量删除*/
+      function delAll (argument) {
+
+        let data = tableCheck.getData();
+        //let str = data.join(",");
+  
+        layer.confirm('确认要删除吗？',function(){
+
+            //捉到所有被选中的，发异步进行删除
+            $.ajax({
+              type:"post",
+              url:"",
+              data: {ids:data},
+              dataType:"json",
+              success : function (data) {
+                layer.alert(data.msg, {icon: data.code === 200 ? 1 : 2},function () {
+                  if(data.code === 200){
+                    getPageData(nowPage,pageSize);
+                  }
+
+                });
+              }
+            })
+        });
+      }
+
+      //分页与搜索
+
+      let nowPage = 1;
+      let pageSize = 5;
+
+      /*初始化页码*/
+      function initPages(data) {
+        // 容器
+        let div = $("<div></div>");
+        // 上一页
+        let pre = $('<a class="prev" pre-page="'+data.prePage+'" has-prev-page="'+data.hasPreviousPage+'" href="javascript:prePage();">&lt;&lt;</a>');
+        div.append(pre);
+        // 动态的渲染页数
+        $(data.navigatepageNums).each(function () {
+          let pageA;
+          if(data.pageNum == this){
+            pageA = $('<span class="current">'+this+'</span>');
+          }else{
+            pageA = $('<a class="num" href="javascript:changePage('+this+');">'+this+'</a>');
+          }
+          div.append(pageA);
+        });
+        // 下一页
+        let next = $('<a class="next" next-page="'+data.nextPage+'" has-next-page="'+data.hasNextPage+'" href="javascript:nextPage();">&gt;&gt;</a>');
+        div.append(next);
+
+        // 加入外层容器
+        $(".page").empty();
+        $(".page").append(div);
+      }
+
+      /*上一页*/
+      function prePage(){
+        // 获取上一页
+        let prevPageNum = $(".prev").attr("pre-page");
+        // 是否有上一页
+        let hasPrevPage = $(".prev").attr("has-prev-page");
+        // 调用获取数据的方法
+        if(hasPrevPage === "true"){
+          getPageData(prevPageNum, pageSize);
+        }else{
+          layer.msg("已经是第一页啦!");
+        }
+      }
+
+      /*中间的页码跳转*/
+      function changePage(page) {
+        getPageData(page, pageSize);
+      }
+
+      /*下一页*/
+      function nextPage() {
+        // 获取下一页
+        let nextPageNum = $(".next").attr("next-page");
+        // 是否有下一页
+        let hasNextPage = $(".next").attr("has-next-page");
+        // 调用获取数据的方法
+        if(hasNextPage === "true"){
+          getPageData(nextPageNum, pageSize);
+        }else{
+          layer.msg("已经是最后一页啦!");
+        }
+      }
+
+      /*封装查询条件*/
+      function getCondition() {
+        let data = {};
+
+        //获取关键字
+        let keywords = $("input[name=keywords]").val();
+        if(keywords.length > 0)
+          data.keywords = keywords;
+        return data;
+      }
+
+      /*查询数据的方法*/
+      function getPageData(page, pageSize){
+        let condition = getCondition();
+        condition.page = page;
+        condition.pageSize = pageSize;
+        $.ajax({
+          type:"post",
+          url:"/type/list",
+          data:condition,
+          dataType:"json",
+          success:function (data) {
+            console.log(data);
+            if(data.code === 200){
+              //维护当前页的全局变量nowPage
+              nowPage = data.data.pageNum;
+              //总条数
+              $("#total").text(data.data.total);
+              //清空数据
+              $("#data-body").empty();
+              //遍历数据的数组，生成对应的行
+              $(data.data.list).each(function () {
+                //创建数据行的dom对象
+                let tr = $('<tr>\n' +
+                        '            <td>'+this.id+'</td>\n' +
+                        '            <td>'+this.typeCode+'</td>\n' +
+                        '            <td>'+this.typeName+'</td>\n' +
+                        '          </tr>')
+                //将数据追加到tbody中
+                $("#data-body").append(tr);
+              });
+              //初始化页码
+              initPages(data.data);
+            }
+
+          }
+        })
+      }
+
+      /*让整个dom加载完成后再执行*/
+      $(function () {
+        getPageData(nowPage, pageSize);
+      })
+
+    </script>
+
+  </body>
+
+</html>

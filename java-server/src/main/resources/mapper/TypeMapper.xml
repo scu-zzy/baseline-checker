@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group4.javaserver.dao.TypeMapper">
+
+    <resultMap type="com.group4.javaserver.pojo.Type" id="TypeMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="typeCode" column="type_code" jdbcType="INTEGER"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TypeMap">
+        select
+          id, type_code, type_name
+        from type
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TypeMap">
+        select
+          id, type_code, type_name
+        from type
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TypeMap">
+        select
+          id, type_code, type_name
+        from type
+        <where>
+            <if test="conditionVo.keywords != null and conditionVo.keywords != ''">
+                and type_name like #{conditionVo.keywords}
+            </if>
+        </where>
+    </select>
+
+    <!--通过类型查询-->
+    <select id="queryByTypeCode" resultType="com.group4.javaserver.pojo.Type">
+        select * from type where type_code = #{typeCode}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into type(type_code, type_name)
+        values (#{typeCode}, #{typeName})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update type
+        <set>
+            <if test="typeCode != null">
+                type_code = #{typeCode},
+            </if>
+            <if test="typeName != null and typeName != ''">
+                type_name = #{typeName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from type where id = #{id}
+    </delete>
+
+    <!--统计数量-->
+    <select id="count" resultType="java.lang.Integer">
+        select count(*) from type
+    </select>
+
+</mapper>

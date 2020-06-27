@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group4.javaserver.dao.PermissionMapper">
+
+    <resultMap type="com.group4.javaserver.pojo.Permission" id="PermissionMap">
+        <result property="permissionCode" column="permission_code" jdbcType="INTEGER"/>
+        <result property="permissionDisplay" column="permission_display" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PermissionMap">
+        select
+          permission_code, permission_display
+        from scdx.permission
+        where permission_code = #{id}
+    </select>
+    <select id="queryByName" resultMap="PermissionMap">
+        select
+          permission_code, permission_display
+        from scdx.permission
+        where permission_display = #{name}
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PermissionMap">
+        select
+          permission_code, permission_display
+        from scdx.permission
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="save" resultMap="PermissionMap">
+        insert into permission ( permission_display)
+        values (#{display});
+
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PermissionMap">
+        select
+          permission_code, permission_display
+        from scdx.permission
+        <where>
+            <if test="permissionCode != null">
+                and permission_code = #{permissionCode}
+            </if>
+            <if test="permissionDisplay != null and permissionDisplay != ''">
+                and permission_display = #{permissionDisplay}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

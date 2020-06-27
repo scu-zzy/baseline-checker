@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>补丁信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <fieldset class="layui-elem-field">
+      <legend>补丁信息</legend>
+      <blockquote class="layui-elem-quote">最后更新时间：
+        <span class="x-red" id="lastTime"></span></blockquote>
+      <div class="layui-field-box">
+
+        <table class="layui-table">
+          <thead>
+            <tr>
+              <th>热修复ID</th>
+              <th>安装时间</th>
+              <th>描述</th>
+              <th>安装者</th>
+          </thead>
+          <tbody id="data-body">
+            <tr>
+
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </fieldset>
+    <script>
+
+      // 获取传递的id
+      let id = "[[${#request.getParameter('id')}]]";
+
+      /*查询数据的方法*/
+      function getPageData(page, pageSize){
+        // 获取数据列表
+        $.ajax({
+          type:"post",
+          url:"/scan/data/detail",
+          data: {id: id},
+          dataType:"json",
+          success:function (data) {
+            console.log(data);
+            if(data.code === 200){
+              // 清空数据
+              $("#data-body").empty();
+              // 获取数据
+              let strData = data.data.data;
+              // 转换成标准的json格式
+              strData = strData.replace(/'/g, "\"");
+              strData = strData.replace(/\\/g, "\/");
+              //console.log(strData);
+              let jsonData = JSON.parse(strData);
+
+              $("#lastTime").text(jsonData["lastTime"]);
+              // 遍历数据的数组,生成对应的行
+              $(jsonData["updateInfo"]).each(function () {
+                // 创建数据行的dom对象
+                let tr = $('<tr>\n' +
+                        '            <td>'+this[0]+'</td>\n' +
+                        '            <td>'+this[1]+'</td>\n' +
+                        '            <td>'+this[2]+'</td>\n' +
+                        '            <td>'+this[3]+'</td>\n' +
+                        '          </tr>');
+                // 将数据追加到 tbody中
+                $("#data-body").append(tr);
+
+              });
+
+            }
+
+          }
+        });
+      }
+      
+      /*让整个dom文档加载完成之后再执行*/
+      $(function () {
+          getPageData(0, 0);
+      })
+    </script>
+
+  </body>
+
+</html>
