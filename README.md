@@ -6,7 +6,7 @@
 
 ## java-server
 
-后台管理系统使用SpringBoot框架搭建，整合thymeleaf，实现前后端分离；使用Shiro实现RBAC权限管理；使用Mybatis作为持久层框架，使用pageHelper实现分页；前端使用echarts组件进行可视化展示；使用定时任务，定时监听，使用多线程接收不同客户端的数据，将数据处理后存入数据库。
+后台管理系统使用SpringBoot框架搭建，实现全局异常处理、拦截器、数据校验器等；整合thymeleaf，实现前后端分离；使用Shiro实现RBAC权限管理；使用Mybatis作为持久层框架，使用pageHelper实现分页；前端使用echarts组件进行可视化展示；使用定时任务，定时监听，使用多线程接收不同客户端的数据，将数据处理后存入数据库。
 
 ## py-client
 
